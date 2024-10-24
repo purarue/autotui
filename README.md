@@ -33,7 +33,7 @@ This has built-ins to prompt, validate and serialize:
 - `Set[<type>]` (or `set[<type>]`)
 - other `NamedTuple`s (recursively)
 
-I wrote this so that I don't have to repeatedly write boilerplate-y python code to validate/serialize/deserialize data. As a more extensive example of its usage, you can see my [`ttally`](https://github.com/seanbreckenridge/ttally) repo, which I use to track things like calories/water etc...
+I wrote this so that I don't have to repeatedly write boilerplate-y python code to validate/serialize/deserialize data. As a more extensive example of its usage, you can see my [`ttally`](https://github.com/purarue/ttally) repo, which I use to track things like calories/water etc...
 
 ## Install
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     load_prompt_and_writeback(Water, "~/.local/share/water.json")
 ```
 
-<img src="https://raw.githubusercontent.com/seanbreckenridge/autotui/master/.assets/builtin_demo.gif">
+<img src="https://raw.githubusercontent.com/purarue/autotui/master/.assets/builtin_demo.gif">
 
 Which, after running a few times, would create:
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 # Water(at=datetime.datetime(2020, 8, 31, 6, 53, 20, tzinfo=datetime.timezone.utc), glass_count=1.0)]
 ```
 
-A lot of my usage of this only ever uses 3 functions in the [`autotui.shortcuts`](https://github.com/seanbreckenridge/autotui/blob/master/autotui/shortcuts.py) module; `dump_to` to dump a sequence of my `NamedTuple`s to a file, `load_from` to do the opposite, and `load_prompt_and_writeback`, to load values in, prompt me, and write back to the file.
+A lot of my usage of this only ever uses 3 functions in the [`autotui.shortcuts`](https://github.com/purarue/autotui/blob/master/autotui/shortcuts.py) module; `dump_to` to dump a sequence of my `NamedTuple`s to a file, `load_from` to do the opposite, and `load_prompt_and_writeback`, to load values in, prompt me, and write back to the file.
 
 #### Enabling Options
 
@@ -219,7 +219,7 @@ You can also pass `format="yaml"` to the `namedtuple_sequence_dumps/namedtuple_s
 
 ### Picking
 
-This has a basic [`fzf`](https://github.com/junegunn/fzf) picker using [`pyfzf-iter`](https://github.com/seanbreckenridge/pyfzf), which lets you pick one item from a list/iterator:
+This has a basic [`fzf`](https://github.com/junegunn/fzf) picker using [`pyfzf-iter`](https://github.com/purarue/pyfzf), which lets you pick one item from a list/iterator:
 
 ```python
 from autotui import pick_namedtuple
@@ -383,7 +383,7 @@ You can also take a look at the [`examples`](./examples)
 # Testing
 
 ```bash
-git clone https://github.com/seanbreckenridge/autotui
+git clone https://github.com/purarue/autotui
 cd ./autotui
 pip install '.[testing]'
 mypy ./autotui
