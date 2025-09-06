@@ -1,0 +1,5 @@
+[flake8]
+ignore = E501,E402,W503,E266,E203
+per-file-ignores = 
+autotui/__init__.py:F401
+autotui/typehelpers.py:E721
