@@ -586,17 +586,13 @@ def test_enum_fails() -> None:
 
 
 def test_hint_generics() -> None:
-    # needed to check if we can type hint generics
-    # https://www.python.org/dev/peps/pep-0585/
-    above_39 = sys.version_info.major >= 3 and sys.version_info.minor >= 9
+    from autotui.typehelpers import strip_generic
+
+    assert strip_generic(list[int]) == list
+
     # or have unions like X | Y
     # https://www.python.org/dev/peps/pep-0604/
     above_310 = sys.version_info.major >= 3 and sys.version_info.minor >= 10
-
-    if above_39:
-        from autotui.typehelpers import strip_generic
-
-        assert strip_generic(list[int]) == list
 
     if above_310:
         from autotui.typehelpers import get_union_args

@@ -61,7 +61,6 @@ def cache(user_function):
 # https://www.python.org/dev/peps/pep-0585/
 # or have unions like X | Y
 # https://www.python.org/dev/peps/pep-0604/
-above_39 = sys.version_info.major >= 3 and sys.version_info.minor >= 9
 above_310 = sys.version_info.major >= 3 and sys.version_info.minor >= 10
 
 AllowedContainers = Union[List[T], Set[T]]
@@ -199,10 +198,9 @@ def strip_generic(tp):
     GA = getattr(typing, "_GenericAlias")
     if isinstance(tp, GA):
         return tp.__origin__
-    if above_39:  # >= Python3.9
-        origin = typing.get_origin(tp)
-        if origin is not None:
-            return origin
+    origin = typing.get_origin(tp)
+    if origin is not None:
+        return origin
     return tp
 
 
