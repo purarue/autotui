@@ -73,8 +73,11 @@ def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers
     return container
 
 
+from typing import Type
+
+
 @cache
-def get_union_args(cls: type) -> Optional[tuple[list[type[Any]], bool]]:
+def get_union_args(cls: Type) -> Optional[tuple[list[type[Any]], bool]]:
     """
     >>> get_union_args(Union[str, int])
     ([<class 'str'>, <class 'int'>], False)
@@ -93,7 +96,7 @@ def get_union_args(cls: type) -> Optional[tuple[list[type[Any]], bool]]:
     if not is_union_type:
         return None
 
-    args: type = cls.__args__
+    args: Type = cls.__args__
     arg_list: list[type] = [e for e in args if e != type(None)]  # noqa: E721
     is_opt = type(None) in args
     assert len(arg_list) > 0
