@@ -4,18 +4,13 @@ import inspect
 from functools import lru_cache
 import types
 from typing import (
-    Tuple,
     Optional,
     TypeVar,
     Callable,
-    Type,
     Union,
-    List,
     Any,
-    Set,
-    Sequence,
-    Dict,
 )
+from collections.abc import Sequence
 from enum import Enum
 from .exceptions import AutoTUIException
 
@@ -37,18 +32,18 @@ PromptFunctionorValue = Union[PromptFunction, T]
 
 # items that can serialized directly into JSON by json.dumps
 PRIMITIVES = {
-    str: Type[str],
-    int: Type[int],
-    float: Type[float],
-    bool: Type[bool],
+    str: type[str],
+    int: type[int],
+    float: type[float],
+    bool: type[bool],
 }
 
 PrimitiveType = Union[str, int, float, bool, dict]
 
 
 CONTAINERS = {
-    list: Type[List],
-    set: Type[Set],
+    list: type[list],
+    set: type[set],
 }
 
 
@@ -63,7 +58,7 @@ def cache(user_function):
 # https://www.python.org/dev/peps/pep-0604/
 above_310 = sys.version_info.major >= 3 and sys.version_info.minor >= 10
 
-AllowedContainers = Union[List[T], Set[T]]
+AllowedContainers = Union[list[T], set[T]]
 
 
 def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers:
@@ -79,7 +74,7 @@ def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers
 
 
 @cache
-def get_union_args(cls: Type) -> Optional[Tuple[List[Type[Any]], bool]]:
+def get_union_args(cls: type) -> Optional[tuple[list[type[Any]], bool]]:
     """
     >>> get_union_args(Union[str, int])
     ([<class 'str'>, <class 'int'>], False)
@@ -98,14 +93,14 @@ def get_union_args(cls: Type) -> Optional[Tuple[List[Type[Any]], bool]]:
     if not is_union_type:
         return None
 
-    args: Type = cls.__args__
-    arg_list: List[Type] = [e for e in args if e != type(None)]  # noqa: E721
+    args: type = cls.__args__
+    arg_list: list[type] = [e for e in args if e != type(None)]  # noqa: E721
     is_opt = type(None) in args
     assert len(arg_list) > 0
     return arg_list, is_opt
 
 
-def resolve_annotation_single(cls: Type) -> Tuple[Type, bool]:
+def resolve_annotation_single(cls: type) -> tuple[type, bool]:
     """
     Given the annotation type from a namedtuple, extract the type
     Doesn't allow Unions other than Optional/None Unions
@@ -130,12 +125,12 @@ def is_namedtuple_obj(thing: Any) -> bool:
 
 # this should be passed a NamedTuple type (typically
 # created with class(NamedTuple), not an instance
-def is_namedtuple_type(thing: Type) -> bool:
+def is_namedtuple_type(thing: type) -> bool:
     return hasattr(thing, "_fields") and issubclass(thing, tuple) and callable(thing)
 
 
 @cache
-def enum_getval(enum: Type[Enum], value: Any) -> Enum:
+def enum_getval(enum: type[Enum], value: Any) -> Enum:
     """
     Given some value and an enum, get the corresponding Enum value
 
@@ -155,11 +150,11 @@ def enum_getval(enum: Type[Enum], value: Any) -> Enum:
     )
 
 
-def is_union(cls: Type) -> bool:
+def is_union(cls: type) -> bool:
     return get_union_args(cls) is not None
 
 
-def is_optional(cls: Type) -> bool:
+def is_optional(cls: type) -> bool:
     res = get_union_args(cls)
     if res is None:
         return False
@@ -169,17 +164,17 @@ def is_optional(cls: Type) -> bool:
 
 
 @cache
-def get_collection_types(cls: Type) -> Tuple[Type, Type]:
+def get_collection_types(cls: type) -> tuple[type, type]:
     """
-    >>> from typing import List
+    >>> from typing import List, Set
     >>> get_collection_types(List[int])
     (<class 'list'>, <class 'int'>)
     >>> get_collection_types(Set[bool])
     (<class 'set'>, <class 'bool'>)
     """
-    container_type: Type = strip_generic(cls)
+    container_type: type = strip_generic(cls)
     # e.g. if List[int], internal[0] == int
-    internal: Sequence[Type] = typing.get_args(cls)  # requires 3.8
+    internal: Sequence[type] = typing.get_args(cls)  # requires 3.8
     assert (
         len(internal) == 1
     ), f"Expected 1 argument for {container_type}, got {len(internal)}"
@@ -204,7 +199,7 @@ def strip_generic(tp):
     return tp
 
 
-def is_primitive(cls: Type) -> bool:
+def is_primitive(cls: type) -> bool:
     """
     Whether or not this is a supported, serializable primitive
 
@@ -223,7 +218,7 @@ def is_primitive(cls: Type) -> bool:
     return cls in PRIMITIVES
 
 
-def is_supported_container(cls: Type) -> bool:
+def is_supported_container(cls: type) -> bool:
     """
     >>> from typing import Dict, List, Set, Tuple
     >>> is_supported_container(List[int])
@@ -239,7 +234,7 @@ def is_supported_container(cls: Type) -> bool:
 
 
 @cache
-def inspect_signature_dict(nt: Callable[..., Any]) -> Dict[str, Type]:
+def inspect_signature_dict(nt: Callable[..., Any]) -> dict[str, type]:
     return {
         name: param.annotation
         for name, param in inspect.signature(nt).parameters.items()
@@ -247,7 +242,7 @@ def inspect_signature_dict(nt: Callable[..., Any]) -> Dict[str, Type]:
 
 
 @cache
-def enum_attribute_dict(enum_cls: Type[Enum]) -> Dict[str, Enum]:
+def enum_attribute_dict(enum_cls: type[Enum]) -> dict[str, Enum]:
     if not hasattr(enum_cls, "__members__"):
         raise TypeError(
             f"Could not find __members__ attribute on Enumeration {enum_cls}. May have passed a value instead of a type?"

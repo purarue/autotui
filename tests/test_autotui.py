@@ -7,7 +7,7 @@ from decimal import Decimal
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import NamedTuple, Optional, List, Set, Dict, Any
+from typing import NamedTuple, Optional, Any
 from enum import Enum
 
 import pytest
@@ -17,7 +17,7 @@ from autotui.exceptions import AutoTUIException
 from autotui.shortcuts import load_from, dump_to
 from autotui.options import options
 
-Json = Dict[str, Any]
+Json = dict[str, Any]
 
 
 class P(NamedTuple):
@@ -68,11 +68,11 @@ class Def(NamedTuple):
     y: str
 
     @staticmethod
-    def attr_use_values() -> Dict:
+    def attr_use_values() -> dict:
         return {"x": 5}
 
     @staticmethod
-    def type_use_values() -> Dict:
+    def type_use_values() -> dict:
         return {str: "default"}
 
 
@@ -86,7 +86,7 @@ def test_default_values_w_class() -> None:
 
 
 @dataclass(init=False)
-class Weight(object):
+class Weight:
     weight: float
 
     def __init__(self, some: str):
@@ -197,8 +197,8 @@ def test_supply_serializer_deserializer() -> None:
 
 
 class L(NamedTuple):
-    a: Optional[List[int]]
-    b: Set[bool]
+    a: Optional[list[int]]
+    b: set[bool]
 
 
 def test_is_namedtuple() -> None:
@@ -307,7 +307,7 @@ def test_optional_specified_null_deserializer() -> None:
 
 
 class LL(NamedTuple):
-    a: List[int]
+    a: list[int]
 
 
 def test_no_value_for_collection_non_optional_warning() -> None:
@@ -341,8 +341,8 @@ def test_basic_sequence_dumps_loads() -> None:
     x = [X(a=1), X(a=5)]
     xlist_str: str = autotui.namedtuple_sequence_dumps(x, indent=None)
     assert xlist_str == """[{"a": 1}, {"a": 5}]"""
-    back_to_x: List[X] = autotui.namedtuple_sequence_loads(xlist_str, to=X)
-    assert type(back_to_x) == list
+    back_to_x: list[X] = autotui.namedtuple_sequence_loads(xlist_str, to=X)
+    assert type(back_to_x) is list
     assert back_to_x[0] == X(a=1)
     assert back_to_x[1] == X(a=5)
 
@@ -423,7 +423,7 @@ def test_custom_handles_serializers() -> None:
     attr_deserializers = {"temp": deserialize_temp}
     d1 = datetime.now()
     d2 = datetime.now()
-    readings: List[Reading] = [
+    readings: list[Reading] = [
         Reading(when=d1, temp=Temperature("20C")),
         Reading(when=d2, temp=Temperature("19C")),
     ]
@@ -464,11 +464,11 @@ def test_shortcuts() -> None:
     type_serializers = {Temperature: serialize_temp}
     attr_deserializers = {"temp": deserialize_temp}
 
-    readings: List[Reading] = [Reading(when=cur, temp=t)]
+    readings: list[Reading] = [Reading(when=cur, temp=t)]
 
     dump_to(readings, f.name, type_serializers=type_serializers)
 
-    lr: List[Reading] = load_from(
+    lr: list[Reading] = load_from(
         Reading, f.name, attr_deserializers=attr_deserializers
     )
     assert len(lr) == 1
@@ -488,7 +488,7 @@ def test_shortcuts() -> None:
     with pytest.raises(ValueError, match="Expecting value: line 1 column 1"):
         json.loads(txt)
 
-    yr: List[Reading] = load_from(
+    yr: list[Reading] = load_from(
         Reading, f.name, attr_deserializers=attr_deserializers
     )
     assert len(yr) == 1
@@ -496,7 +496,7 @@ def test_shortcuts() -> None:
     assert lr[0].when.timestamp() == yr[0].when.timestamp()
 
     # set format explicitly
-    yr_explicit: List[Reading] = load_from(
+    yr_explicit: list[Reading] = load_from(
         Reading, f.name, format="yaml", attr_deserializers=attr_deserializers
     )
 
@@ -523,7 +523,7 @@ def test_no_way_to_serialize() -> None:
         json.dumps(not_serialized)
 
 
-class Broken(object):
+class Broken:
     pass
 
 
@@ -649,3 +649,20 @@ def test_removing_enum_value() -> None:
     # make sure it raises again after the option is turned off
     with pytest.raises(AutoTUIException, match="Could not find z on Enumeration"):
         autotui.deserialize_namedtuple({"choice": "z"}, UDAT)
+
+
+from typing import List, Set
+
+
+class OldSequenceTypes(NamedTuple):
+    a: List[int]  # noqa
+    c: Set[float]  # noqa
+
+
+def test_old_sequence_types() -> None:
+    obj = OldSequenceTypes(a=[1, 2, 3], c={1.0, 2.0})
+    seri = autotui.serialize_namedtuple(obj)
+    assert seri == {"a": [1, 2, 3], "c": [1.0, 2.0]}
+    deseri = autotui.deserialize_namedtuple(seri, to=OldSequenceTypes)
+    assert deseri.a == [1, 2, 3]
+    assert deseri.c == {1.0, 2.0}

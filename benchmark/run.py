@@ -8,7 +8,7 @@ from functools import wraps, partial
 from cProfile import run
 from pstats import SortKey
 from time import perf_counter
-from typing import NamedTuple, Optional, List
+from typing import NamedTuple, Optional
 from datetime import datetime, timedelta
 
 from autotui import (
@@ -28,7 +28,7 @@ class Complex(NamedTuple):
     a: int
     b: str
     c: datetime
-    d: List[bool]
+    d: list[bool]
     e: Optional[int]
     f: timedelta
 
@@ -93,14 +93,14 @@ complex_json = '[{"a": 5, "b": "something", "c": 1617131493, "d": [true, false],
 def benchmark(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        print("Running {}...".format(f.__name__))
+        print(f"Running {f.__name__}...")
         start = perf_counter()
         for _ in range(ITERATIONS):
             f(*args, **kwargs)
         end = perf_counter()
         elapsed = end - start
-        print("Elapsed time: {}".format(elapsed))
-        print("Time per loop: {}".format(elapsed / ITERATIONS))
+        print(f"Elapsed time: {elapsed}")
+        print(f"Time per loop: {elapsed / ITERATIONS}")
 
     return wrapper
 

@@ -1,7 +1,7 @@
 import sys
 import warnings
 from datetime import datetime
-from typing import Type, Optional, Callable, List, Union, Dict
+from typing import Optional, Callable, Union
 from enum import Enum
 
 import click
@@ -50,7 +50,7 @@ def create_repl_prompt_str(prompt_msg: str) -> str:
 
 # handles the repetitive task of validating passed kwargs for prompt string for attrs
 def create_prompt_string(
-    for_type: Union[str, Type], for_attr: Optional[str], prompt_msg: Optional[str]
+    for_type: Union[str, type], for_attr: Optional[str], prompt_msg: Optional[str]
 ) -> str:
     # if user supplied one, use that
     pmsg = prompt_msg
@@ -234,11 +234,11 @@ def prompt_datetime(
 ## ENUM
 
 
-def _create_enum_word_targets(enum_mapping: Dict[str, Enum]) -> Dict[str, Enum]:
+def _create_enum_word_targets(enum_mapping: dict[str, Enum]) -> dict[str, Enum]:
     # create a map of any possible description that maps back to the enumeration
     # type. When the user selects one of the descriptions, we can use this map
     # to get the corresponding Enum value
-    enum_desc_map: Dict[str, Enum] = {}
+    enum_desc_map: dict[str, Enum] = {}
     for k, v in enum_mapping.items():
         if k not in enum_desc_map:
             enum_desc_map[k] = v
@@ -246,13 +246,13 @@ def _create_enum_word_targets(enum_mapping: Dict[str, Enum]) -> Dict[str, Enum]:
 
 
 def prompt_enum(
-    enum_cls: Type[Enum],
+    enum_cls: type[Enum],
     for_attr: Optional[str] = None,
     prompt_msg: Optional[str] = None,
 ) -> Enum:
     enum_name: str = getattr(enum_cls, "__name__", "Enum")
     m: str = create_prompt_string(enum_name, for_attr, prompt_msg)
-    enum_mapping: Dict[str, Enum] = enum_attribute_dict(enum_cls)
+    enum_mapping: dict[str, Enum] = enum_attribute_dict(enum_cls)
 
     enum_desc_map = _create_enum_word_targets(enum_mapping)
 
@@ -385,7 +385,7 @@ def prompt_optional(
 
 def prompt_wrap_error(
     func: Callable[[str], T],
-    catch_errors: List[Type],
+    catch_errors: list[type],
     for_attr: Optional[str] = None,
     prompt_msg: Optional[str] = None,
 ) -> T:

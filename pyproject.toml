@@ -53,8 +53,7 @@ warn_return_any = true
 warn_unreachable = true
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules autotui"
-testpaths = ["tests"]
+addopts = "--doctest-modules autotui tests"
 
 [tool.setuptools.packages.find]
 include = ["autotui"]

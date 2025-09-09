@@ -1,4 +1,5 @@
-from typing import Dict, Type, Callable, Any, Union, Optional
+import inspect
+from typing import Callable, Any, Union, Optional
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
@@ -22,9 +23,9 @@ from .exceptions import AutoTUIException
 
 def _serialize_type(
     value: Any,
-    cls: Type,
+    cls: type,
     is_optional: bool,
-    type_serializers: Dict[Type, Callable[[Any], PrimitiveType]],
+    type_serializers: dict[type, Callable[[Any], PrimitiveType]],
 ) -> Optional[Union[PrimitiveType, Any]]:
     """
     Gets one of the built-in serializers or a type_serializers from the user,
@@ -45,7 +46,7 @@ def _serialize_type(
     else:
         if cls == datetime:
             return int(value.timestamp())
-        elif issubclass(cls, Enum):
+        elif inspect.isclass(cls) and issubclass(cls, Enum):
             # assumes that the enumeration value the user provided is JSON-serializable
             if isinstance(value, Enum):
                 # https://docs.python.org/3/library/enum.html#programmatic-access-to-enumeration-members-and-their-attributes
@@ -72,9 +73,9 @@ def _serialize_type(
 
 def serialize_namedtuple(
     nt: NT,
-    attr_serializers: Optional[Dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[Dict[Type, Callable[[T], PrimitiveType]]] = None,
-) -> Dict[str, Any]:
+    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
+    type_serializers: Optional[dict[type, Callable[[T], PrimitiveType]]] = None,
+) -> dict[str, Any]:
     """
     Serializes a NamedTuples to a JSON-compatible dictionary
 
@@ -84,7 +85,7 @@ def serialize_namedtuple(
     attr_serializers = attr_serializers or {}
     type_serializers = type_serializers or {}
 
-    json_dict: Dict[str, Any] = {}
+    json_dict: dict[str, Any] = {}
 
     for attr_name, nt_annotation in inspect_signature_dict(nt.__class__).items():
         # (<class 'int'>, False)
@@ -137,9 +138,9 @@ def serialize_namedtuple(
 
 def _deserialize_type(
     value: Any,
-    cls: Type,
+    cls: type,
     is_optional: bool,
-    type_deserializers: Dict[Type, Callable[[PrimitiveType], T]],
+    type_deserializers: dict[type, Callable[[PrimitiveType], T]],
 ) -> Optional[Union[PrimitiveType, Any]]:
     """
     Gets one of the built-in deserializers or a type_deserializers from the user,
@@ -196,10 +197,10 @@ def _deserialize_type(
 
 
 def deserialize_namedtuple(
-    obj: Dict[str, Any],
-    to: Type[NT],
-    attr_deserializers: Optional[Dict[str, Callable[[PrimitiveType], T]]] = None,
-    type_deserializers: Optional[Dict[Type, Callable[[PrimitiveType], T]]] = None,
+    obj: dict[str, Any],
+    to: type[NT],
+    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], T]]] = None,
+    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], T]]] = None,
 ) -> NT:
     """
     Deserializes a Dict loaded from JSON into a NamedTuple object
@@ -211,7 +212,7 @@ def deserialize_namedtuple(
     type_deserializers = type_deserializers or {}
 
     # temporary to hold values, will splat into namedtuple at the end of func
-    json_dict: Dict[str, Any] = {}
+    json_dict: dict[str, Any] = {}
 
     for attr_name, nt_annotation in inspect_signature_dict(to).items():
         # (<class 'int'>, False)

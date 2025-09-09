@@ -1,5 +1,6 @@
 import os
-from typing import Set, Generator, Dict, Optional, List, Union
+from typing import Optional, Union
+from collections.abc import Generator
 from collections import defaultdict
 from enum import auto, Enum
 from contextlib import contextmanager
@@ -13,11 +14,11 @@ class Option(Enum):
     CLICK_PROMPT = auto()
 
     @property
-    def names(self) -> List[str]:
-        lst: List[str] = []
+    def names(self) -> list[str]:
+        lst: list[str] = []
 
         # dedupe duplicate names (keys present for backwards compatibility)
-        seen: Set[Option] = set()
+        seen: set[Option] = set()
         for name, val in Option.__members__.items():
             if val in seen:
                 continue
@@ -28,7 +29,7 @@ class Option(Enum):
 
 # set which gets modified by contextmanager
 # to enable/disable flags
-_ENABLED: Dict[Option, Set[object]] = defaultdict(set)
+_ENABLED: dict[Option, set[object]] = defaultdict(set)
 
 
 def str_to_option(op: str) -> Optional[Option]:

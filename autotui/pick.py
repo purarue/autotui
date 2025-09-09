@@ -1,16 +1,12 @@
 import sys
 from typing import (
     Union,
-    Iterable,
-    List,
-    Iterator,
     Optional,
-    Sequence,
-    Dict,
     Callable,
     Any,
     cast,
 )
+from collections.abc import Iterable, Iterator, Sequence
 from .typehelpers import NT
 from .warn import warn
 
@@ -21,7 +17,7 @@ def _default_key(val: Any) -> str:
 
 def _remember(
     items: Union[Iterable[NT], Iterator[NT]],
-    memory: Dict[str, NT],
+    memory: dict[str, NT],
     key_func: Optional[Callable[[NT], str]] = None,
 ) -> Iterator[str]:
     """
@@ -54,11 +50,11 @@ def pick_namedtuple(
             file=sys.stderr,
         )
         raise e
-    memory: Dict[str, NT] = {}
+    memory: dict[str, NT] = {}
     picker = pyfzf.FzfPrompt(default_options="--no-multi")
     # use null char to delimit items, so namedtuples can have newlines
-    chosen_lst: List[str] = cast(
-        List[str],
+    chosen_lst: list[str] = cast(
+        list[str],
         picker.prompt(
             _remember(items, memory, key_func), "--read0", *fzf_options, delimiter="\0"
         ),

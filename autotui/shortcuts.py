@@ -1,10 +1,7 @@
 from pathlib import Path
 from typing import (
     Callable,
-    Type,
     Union,
-    Dict,
-    List,
     Any,
     Optional,
 )
@@ -45,11 +42,11 @@ def _detect_format(path: Path, format: Optional[Format]) -> Optional[Format]:
 
 
 def dump_to(
-    items: List[NT],
+    items: list[NT],
     path: Union[Path, str],
     *,
-    attr_serializers: Optional[Dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[Dict[Type, Callable[[Any], PrimitiveType]]] = None,
+    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
+    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
     format: Optional[Format] = None,
 ) -> None:
     """
@@ -78,14 +75,14 @@ def dump_to(
 # args are slightly reordered here, compared to json.load
 # to be consistent with dump_to
 def load_from(
-    to: Type[NT],
+    to: type[NT],
     path: Union[Path, str],
     *,
-    attr_deserializers: Optional[Dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[Dict[Type, Callable[[PrimitiveType], Any]]] = None,
+    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
+    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
     format: Optional[Format] = None,
     allow_empty: bool = False,
-) -> List[NT]:
+) -> list[NT]:
     """
     Takes a type to load and a path to a file containing JSON.
     Reads from the file, and deserializes the items into a list,
@@ -103,7 +100,7 @@ def load_from(
     format = _detect_format(p, format)
     try:
         with p.open(mode="r") as f:
-            items: List[NT] = namedtuple_sequence_load(
+            items: list[NT] = namedtuple_sequence_load(
                 f,
                 to,
                 attr_deserializers=attr_deserializers,
@@ -119,21 +116,21 @@ def load_from(
 
 
 def load_prompt_and_writeback(
-    to: Type[NT],
+    to: type[NT],
     path: Union[Path, str],
     *,
     create_file: bool = True,
-    attr_validators: Optional[Dict[str, AutoHandler]] = None,
-    type_validators: Optional[Dict[Type[T], AutoHandler]] = None,
-    attr_use_values: Optional[Dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[Dict[Type[T], PromptFunctionorValue]] = None,
-    attr_serializers: Optional[Dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[Dict[Type, Callable[[Any], PrimitiveType]]] = None,
-    attr_deserializers: Optional[Dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[Dict[Type, Callable[[PrimitiveType], Any]]] = None,
+    attr_validators: Optional[dict[str, AutoHandler]] = None,
+    type_validators: Optional[dict[type[T], AutoHandler]] = None,
+    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
+    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
+    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
+    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
+    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
+    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
     format: Optional[Format] = None,
     prompt_function: Optional[Callable[..., NT]] = None,
-) -> List[NT]:
+) -> list[NT]:
     """
     An entry point to entire library, essentially.
 
@@ -155,7 +152,7 @@ def load_prompt_and_writeback(
     p: Path = _normalize(path)
     format = _detect_format(p, format)
     # read from file
-    items: List[NT] = []
+    items: list[NT] = []
     try:
         items = load_from(
             to,

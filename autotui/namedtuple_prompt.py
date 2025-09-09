@@ -4,9 +4,6 @@ from typing import (
     Any,
     Optional,
     Union,
-    List,
-    Type,
-    Dict,
     Callable,
 )
 from enum import Enum
@@ -34,11 +31,11 @@ class AutoHandler:
     def __init__(
         self,
         func: Callable[[str], T],
-        catch_errors: Optional[List[Type]] = None,
+        catch_errors: Optional[list[type]] = None,
         prompt_msg: Optional[str] = None,
     ):
         self.func = func
-        self.catch_errors: List[Type] = [] if catch_errors is None else catch_errors
+        self.catch_errors: list[type] = [] if catch_errors is None else catch_errors
         self.prompt_msg = prompt_msg
 
 
@@ -54,10 +51,10 @@ def _create_callable_from_user(value: PromptFunctionorValue) -> PromptFunction:
 
 
 def _get_validator(
-    cls: Type,
+    cls: type,
     attr_name: str,
-    type_validators: Dict[Type, AutoHandler],
-    type_use_values: Dict[Type, T],
+    type_validators: dict[type, AutoHandler],
+    type_use_values: dict[type, T],
 ) -> PromptFunction:
     """
     Gets one of the built-in validators or a type_validator from the user.
@@ -100,7 +97,7 @@ def _get_validator(
 def _prompt_many(
     attr_name: str,
     promptfunc: PromptFunction,
-    container_type: Type[AllowedContainers],
+    container_type: type[AllowedContainers],
     ask_first: bool,
 ) -> Callable[[], AllowedContainers]:
     """
@@ -169,7 +166,7 @@ def _create_callable_prompt(attr_name: str, handler: AutoHandler) -> PromptFunct
     )
 
 
-def _nt_dict(nt: Type, attr: str) -> Dict:
+def _nt_dict(nt: type, attr: str) -> dict:
     """
     Lets the user define any of the dictionaries as a function
     which returns the dict on the class -- e.g.
@@ -191,7 +188,7 @@ def _nt_dict(nt: Type, attr: str) -> Dict:
 
 
 # if d2 is not None, update d1 with its keys
-def _update(d1: Dict, d2: Optional[Dict] = None) -> Dict:
+def _update(d1: dict, d2: Optional[dict] = None) -> dict:
     if d2 is not None:
         for k in d2.keys():
             d1[k] = d2[k]
@@ -199,12 +196,12 @@ def _update(d1: Dict, d2: Optional[Dict] = None) -> Dict:
 
 
 def namedtuple_prompt_funcs(
-    nt: Type,
-    attr_validators: Optional[Dict[str, AutoHandler]] = None,
-    type_validators: Optional[Dict[Type[T], AutoHandler]] = None,
-    attr_use_values: Optional[Dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[Dict[Type[T], PromptFunctionorValue]] = None,
-) -> Dict[str, PromptFunction]:
+    nt: type,
+    attr_validators: Optional[dict[str, AutoHandler]] = None,
+    type_validators: Optional[dict[type[T], AutoHandler]] = None,
+    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
+    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
+) -> dict[str, PromptFunction]:
     """
     Parses the signature of a NamedTuple received from the User
 
@@ -238,7 +235,7 @@ def namedtuple_prompt_funcs(
     # <Signature (a: int, b: float, c: str)>
     # the dict of attribute names -> validator (prompt) functions
     # to populate the namedtuple fields
-    prompt_functions: Dict[str, PromptFunction] = {}
+    prompt_functions: dict[str, PromptFunction] = {}
 
     # example:
     # [('a', <Parameter "a: int">), ('b', <Parameter "b: float">), ('c', <Parameter "c: str">)]
@@ -303,12 +300,12 @@ def namedtuple_prompt_funcs(
 
 
 def prompt_namedtuple(
-    nt: Type[NT],
+    nt: type[NT],
     *,
-    attr_validators: Optional[Dict[str, AutoHandler]] = None,
-    type_validators: Optional[Dict[Type[T], AutoHandler]] = None,
-    attr_use_values: Optional[Dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[Dict[Type[T], PromptFunctionorValue]] = None,
+    attr_validators: Optional[dict[str, AutoHandler]] = None,
+    type_validators: Optional[dict[type[T], AutoHandler]] = None,
+    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
+    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
 ) -> NT:
     """
     Generate the list of functions using namedtuple_prompt_funcs
@@ -323,10 +320,10 @@ def prompt_namedtuple(
     write custom code to prompt the user), or just a default value
     """
 
-    funcs: Dict[str, PromptFunction] = namedtuple_prompt_funcs(
+    funcs: dict[str, PromptFunction] = namedtuple_prompt_funcs(
         nt, attr_validators, type_validators, attr_use_values, type_use_values
     )
-    nt_values: Dict[str, T] = {
+    nt_values: dict[str, T] = {
         attr_key: attr_func() for attr_key, attr_func in funcs.items()
     }
     return nt(**nt_values)  # type: ignore[operator, no-any-return, call-arg]

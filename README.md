@@ -28,9 +28,9 @@ This has built-ins to prompt, validate and serialize:
 - `datetime`
 - `Enum`
 - `Decimal`
-- `Optional[<type>]` [(or `<type> | None`)](https://www.python.org/dev/peps/pep-0604/)
-- `List[<type>]` (or `list[<type>]`)
-- `Set[<type>]` (or `set[<type>]`)
+- `<type> | None` (`Union`s)
+- `list[<type>]`
+- `set[<type>]`
 - other `NamedTuple`s (recursively)
 
 I wrote this so that I don't have to repeatedly write boilerplate-y python code to validate/serialize/deserialize data. As a more extensive example of its usage, you can see my [`ttally`](https://github.com/purarue/ttally) repo, which I use to track things like calories/water etc...
@@ -153,7 +153,7 @@ For example, to prompt for strings by opening `vim` instead:
 
 ```python
 from datetime import datetime
-from typing import NamedTuple, List, Optional
+from typing import NamedTuple, Optional
 
 from autotui.shortcuts import load_prompt_and_writeback
 
@@ -167,7 +167,7 @@ def edit_in_vim() -> str:
 
 class JournalEntry(NamedTuple):
     creation_date: datetime
-    tags: Optional[List[str]]  # one or more tags to tag this journal entry with
+    tags: Optional[list[str]]  # one or more tags to tag this journal entry with
     content: str
 
 

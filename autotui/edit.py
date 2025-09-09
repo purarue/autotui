@@ -1,4 +1,5 @@
-from typing import Sequence, Any, Dict
+from typing import Any
+from collections.abc import Sequence
 from functools import partial
 from pprint import pformat
 
@@ -45,7 +46,7 @@ def edit_namedtuple(
 ) -> NT:
     """Edit a namedtuple."""
     assert is_namedtuple_obj(nt), f"nt {nt} is not a namedtuple"
-    nt_dict: Dict[str, Any] = nt._asdict()  # type: ignore
+    nt_dict: dict[str, Any] = nt._asdict()  # type: ignore
     _attr_use_values = kwargs.pop("attr_use_values", {})
     while True:
         assert isinstance(nt_dict, dict)
