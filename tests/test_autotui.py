@@ -620,9 +620,9 @@ class Dec(NamedTuple):
 
 def test_decimal() -> None:
     d = Dec(x=Decimal("5"), y=2)
-    ser = autotui.serialize_namedtuple(d)
-    assert ser == {"x": "5", "y": 2}
-    d2 = autotui.deserialize_namedtuple(ser, to=Dec)
+    seri = autotui.serialize_namedtuple(d)
+    assert seri == {"x": "5", "y": 2}
+    d2 = autotui.deserialize_namedtuple(seri, to=Dec)
     assert isinstance(d2.x, Decimal)
     assert d == d2
 

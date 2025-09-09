@@ -2,7 +2,7 @@
 
 [![PyPi version](https://img.shields.io/pypi/v/autotui.svg)](https://pypi.python.org/pypi/autotui) [![Python 3.10|3.11|3.12|3.13](https://img.shields.io/pypi/pyversions/autotui.svg)](https://pypi.python.org/pypi/autotui) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-This uses type hints to convert [`NamedTuple`](https://docs.python.org/3.9/library/typing.html#typing.NamedTuple)'s (short struct-like classes) to JSON/YAML, and back to python objects.
+This uses type hints to convert [`NamedTuple`](https://docs.python.org/3.13/library/typing.html#typing.NamedTuple)'s (short struct-like classes) to JSON/YAML, and back to python objects.
 
 It also wraps [`prompt_toolkit`](https://python-prompt-toolkit.readthedocs.io/en/master/index.html) to prompt the user and validate the input for common types, and is extendible to whatever types you want.
 
@@ -263,7 +263,7 @@ To install, `pip install 'autotui[edit]'` or `pip install click`
 
 If you want to support custom types, or specify a special way to serialize another NamedTuple recursively, you can specify `type_validators`, and `type_[de]serializer` to handle the validation, serialization, deserialization for that type/attribute name.
 
-As a more complicated example, heres a validator for [`timedelta`](https://docs.python.org/3.8/library/datetime.html#datetime.timedelta) (duration of time), being entered as MM:SS, and the corresponding serializers.
+As a more complicated example, heres a validator for [`timedelta`](https://docs.python.org/3.13/library/datetime.html#datetime.timedelta) (duration of time), being entered as MM:SS, and the corresponding serializers.
 
 ```python
 # see examples/timedelta_serializer.py for imports
