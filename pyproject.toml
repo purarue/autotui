@@ -1,6 +1,6 @@
 [project]
 name = "autotui"
-version = "0.4.7"
+version = "0.4.8"
 description = "\"quickly create UIs to interactively prompt, validate, and persist python objects to disk (JSON/YAML) and back using type hints\""
 readme = "README.md"
 license = "MIT"
