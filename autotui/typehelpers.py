@@ -5,6 +5,7 @@ from functools import lru_cache
 import types
 from typing import (
     Optional,
+    Type,
     TypeVar,
     Union,
     Any,
@@ -73,10 +74,8 @@ def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers
     return container
 
 
-
-
 @cache
-def get_union_args(cls: type) -> tuple[list[type[Any]], bool] | None:
+def get_union_args(cls: Type) -> tuple[list[type[Any]], bool] | None:
     """
     >>> get_union_args(Union[str, int])
     ([<class 'str'>, <class 'int'>], False)
@@ -95,14 +94,14 @@ def get_union_args(cls: type) -> tuple[list[type[Any]], bool] | None:
     if not is_union_type:
         return None
 
-    args: type = cls.__args__
+    args: Type = cls.__args__
     arg_list: list[type] = [e for e in args if e != type(None)]  # noqa: E721
     is_opt = type(None) in args
     assert len(arg_list) > 0
     return arg_list, is_opt
 
 
-def resolve_annotation_single(cls: type) -> tuple[type, bool]:
+def resolve_annotation_single(cls: Type) -> tuple[type, bool]:
     """
     Given the annotation type from a namedtuple, extract the type
     Doesn't allow Unions other than Optional/None Unions
