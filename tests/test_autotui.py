@@ -28,8 +28,8 @@ class P(NamedTuple):
 
 
 class O(NamedTuple):
-    a: Optional[int] = None
-    b: Optional[str] = None
+    a: int | None = None
+    b: str | None = None
 
 
 def test_int_converts_to_float_no_warning() -> None:
@@ -197,7 +197,7 @@ def test_supply_serializer_deserializer() -> None:
 
 
 class L(NamedTuple):
-    a: Optional[list[int]]
+    a: list[int] | None
     b: set[bool]
 
 
@@ -258,7 +258,7 @@ def test_expected_key_warning() -> None:
 
 
 class X_OPT(NamedTuple):
-    a: Optional[int]
+    a: int | None
 
 
 def test_optional_key_loads_with_no_warnings() -> None:
@@ -269,7 +269,7 @@ def test_optional_key_loads_with_no_warnings() -> None:
 
 # this is a way to handle serializing null types into
 # some default value
-def deserialize_a(x: Optional[int]) -> int:
+def deserialize_a(x: int | None) -> int:
     if x is None:
         return 0
     else:
@@ -651,12 +651,11 @@ def test_removing_enum_value() -> None:
         autotui.deserialize_namedtuple({"choice": "z"}, UDAT)
 
 
-from typing import List, Set
 
 
 class OldSequenceTypes(NamedTuple):
-    a: List[int]  # noqa
-    c: Set[float]  # noqa
+    a: list[int]  # noqa
+    c: set[float]  # noqa
 
 
 def test_old_sequence_types() -> None:

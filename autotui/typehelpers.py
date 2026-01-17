@@ -6,10 +6,10 @@ import types
 from typing import (
     Optional,
     TypeVar,
-    Callable,
     Union,
     Any,
 )
+from collections.abc import Callable
 from collections.abc import Sequence
 from enum import Enum
 from .exceptions import AutoTUIException
@@ -73,11 +73,10 @@ def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers
     return container
 
 
-from typing import Type
 
 
 @cache
-def get_union_args(cls: Type) -> Optional[tuple[list[type[Any]], bool]]:
+def get_union_args(cls: type) -> tuple[list[type[Any]], bool] | None:
     """
     >>> get_union_args(Union[str, int])
     ([<class 'str'>, <class 'int'>], False)
@@ -96,7 +95,7 @@ def get_union_args(cls: Type) -> Optional[tuple[list[type[Any]], bool]]:
     if not is_union_type:
         return None
 
-    args: Type = cls.__args__
+    args: type = cls.__args__
     arg_list: list[type] = [e for e in args if e != type(None)]  # noqa: E721
     is_opt = type(None) in args
     assert len(arg_list) > 0

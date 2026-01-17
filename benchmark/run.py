@@ -8,7 +8,7 @@ from functools import wraps, partial
 from cProfile import run
 from pstats import SortKey
 from time import perf_counter
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 from datetime import datetime, timedelta
 
 from autotui import (
@@ -29,7 +29,7 @@ class Complex(NamedTuple):
     b: str
     c: datetime
     d: list[bool]
-    e: Optional[int]
+    e: int | None
     f: timedelta
 
 
