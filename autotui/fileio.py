@@ -1,7 +1,8 @@
 import json
 from io import StringIO
 
-from typing import Callable, Any, TextIO, Optional, Literal
+from typing import Any, TextIO, Literal
+from collections.abc import Callable
 
 from .serialize import serialize_namedtuple, deserialize_namedtuple, PrimitiveType
 from .typehelpers import NT, T
@@ -19,9 +20,9 @@ def _pretty_print(kwargs: dict[str, Any]) -> dict[str, Any]:
 def namedtuple_sequence_dumps(
     nt_items: list[NT],
     *,
-    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
-    format: Optional[Format] = "json",
+    attr_serializers: dict[str, Callable[[T], PrimitiveType]] | None = None,
+    type_serializers: dict[type, Callable[[Any], PrimitiveType]] | None = None,
+    format: Format | None = "json",
     **kwargs: Any,
 ) -> str:
     """
@@ -48,9 +49,9 @@ def namedtuple_sequence_dump(
     nt_items: list[NT],
     fp: TextIO,
     *,
-    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
-    format: Optional[Format] = "json",
+    attr_serializers: dict[str, Callable[[T], PrimitiveType]] | None = None,
+    type_serializers: dict[type, Callable[[Any], PrimitiveType]] | None = None,
+    format: Format | None = "json",
     **kwargs: Any,
 ) -> None:
     """
@@ -82,9 +83,9 @@ def namedtuple_sequence_loads(
     nt_string: str,
     to: type[NT],
     *,
-    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
-    format: Optional[Format] = "json",
+    attr_deserializers: dict[str, Callable[[PrimitiveType], Any]] | None = None,
+    type_deserializers: dict[type, Callable[[PrimitiveType], Any]] | None = None,
+    format: Format | None = "json",
 ) -> list[NT]:
     """
     Load a list of namedtuples specified by 'to' from a JSON string
@@ -119,9 +120,9 @@ def namedtuple_sequence_load(
     fp: TextIO,
     to: type[NT],
     *,
-    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
-    format: Optional[Format] = "json",
+    attr_deserializers: dict[str, Callable[[PrimitiveType], Any]] | None = None,
+    type_deserializers: dict[type, Callable[[PrimitiveType], Any]] | None = None,
+    format: Format | None = "json",
 ) -> list[NT]:
     """
     Load a list of namedtuples to the namedtuple specified by 'to'

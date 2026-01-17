@@ -2,10 +2,8 @@ import functools
 from datetime import datetime
 from typing import (
     Any,
-    Optional,
-    Union,
-    Callable,
 )
+from collections.abc import Callable
 from enum import Enum
 
 from .typehelpers import (
@@ -31,8 +29,8 @@ class AutoHandler:
     def __init__(
         self,
         func: Callable[[str], T],
-        catch_errors: Optional[list[type]] = None,
-        prompt_msg: Optional[str] = None,
+        catch_errors: list[type] | None = None,
+        prompt_msg: str | None = None,
     ):
         self.func = func
         self.catch_errors: list[type] = [] if catch_errors is None else catch_errors
@@ -130,7 +128,7 @@ def _prompt_many(
 
 
 def _maybe_wrap_optional(
-    attr_name: str, handler: Union[AutoHandler, PromptFunction], is_optional: bool
+    attr_name: str, handler: AutoHandler | PromptFunction, is_optional: bool
 ) -> OptionalPromptFunction:
     """
     If a NamedTuple attribute is optional, wrap it
@@ -188,7 +186,7 @@ def _nt_dict(nt: type, attr: str) -> dict:
 
 
 # if d2 is not None, update d1 with its keys
-def _update(d1: dict, d2: Optional[dict] = None) -> dict:
+def _update(d1: dict, d2: dict | None = None) -> dict:
     if d2 is not None:
         for k in d2.keys():
             d1[k] = d2[k]
@@ -197,10 +195,10 @@ def _update(d1: dict, d2: Optional[dict] = None) -> dict:
 
 def namedtuple_prompt_funcs(
     nt: type,
-    attr_validators: Optional[dict[str, AutoHandler]] = None,
-    type_validators: Optional[dict[type[T], AutoHandler]] = None,
-    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
+    attr_validators: dict[str, AutoHandler] | None = None,
+    type_validators: dict[type[T], AutoHandler] | None = None,
+    attr_use_values: dict[str, PromptFunctionorValue] | None = None,
+    type_use_values: dict[type[T], PromptFunctionorValue] | None = None,
 ) -> dict[str, PromptFunction]:
     """
     Parses the signature of a NamedTuple received from the User
@@ -302,10 +300,10 @@ def namedtuple_prompt_funcs(
 def prompt_namedtuple(
     nt: type[NT],
     *,
-    attr_validators: Optional[dict[str, AutoHandler]] = None,
-    type_validators: Optional[dict[type[T], AutoHandler]] = None,
-    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
+    attr_validators: dict[str, AutoHandler] | None = None,
+    type_validators: dict[type[T], AutoHandler] | None = None,
+    attr_use_values: dict[str, PromptFunctionorValue] | None = None,
+    type_use_values: dict[type[T], PromptFunctionorValue] | None = None,
 ) -> NT:
     """
     Generate the list of functions using namedtuple_prompt_funcs

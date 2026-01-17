@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from autotui.shortcuts import load_prompt_and_writeback
 
@@ -13,7 +13,7 @@ def edit_in_vim() -> str:
 
 class JournalEntry(NamedTuple):
     creation_date: datetime
-    tags: Optional[list[str]]  # one or more tags to tag this journal entry with
+    tags: list[str] | None  # one or more tags to tag this journal entry with
     content: str
 
 

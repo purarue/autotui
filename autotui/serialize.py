@@ -1,5 +1,6 @@
 import inspect
-from typing import Callable, Any, Union, Optional
+from typing import Any
+from collections.abc import Callable
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
@@ -26,7 +27,7 @@ def _serialize_type(
     cls: type,
     is_optional: bool,
     type_serializers: dict[type, Callable[[Any], PrimitiveType]],
-) -> Optional[Union[PrimitiveType, Any]]:
+) -> PrimitiveType | Any | None:
     """
     Gets one of the built-in serializers or a type_serializers from the user,
     and serializes the value from the NamedTuple to that
@@ -73,8 +74,8 @@ def _serialize_type(
 
 def serialize_namedtuple(
     nt: NT,
-    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[dict[type, Callable[[T], PrimitiveType]]] = None,
+    attr_serializers: dict[str, Callable[[T], PrimitiveType]] | None = None,
+    type_serializers: dict[type, Callable[[T], PrimitiveType]] | None = None,
 ) -> dict[str, Any]:
     """
     Serializes a NamedTuples to a JSON-compatible dictionary
@@ -141,7 +142,7 @@ def _deserialize_type(
     cls: type,
     is_optional: bool,
     type_deserializers: dict[type, Callable[[PrimitiveType], T]],
-) -> Optional[Union[PrimitiveType, Any]]:
+) -> PrimitiveType | Any | None:
     """
     Gets one of the built-in deserializers or a type_deserializers from the user,
     and deserializes the loaded value to the NamedTuple representation
@@ -199,8 +200,8 @@ def _deserialize_type(
 def deserialize_namedtuple(
     obj: dict[str, Any],
     to: type[NT],
-    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], T]]] = None,
-    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], T]]] = None,
+    attr_deserializers: dict[str, Callable[[PrimitiveType], T]] | None = None,
+    type_deserializers: dict[type, Callable[[PrimitiveType], T]] | None = None,
 ) -> NT:
     """
     Deserializes a Dict loaded from JSON into a NamedTuple object

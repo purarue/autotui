@@ -1,11 +1,9 @@
 import sys
 from typing import (
-    Union,
-    Optional,
-    Callable,
     Any,
     cast,
 )
+from collections.abc import Callable
 from collections.abc import Iterable, Iterator, Sequence
 from .typehelpers import NT
 from .warn import warn
@@ -16,9 +14,9 @@ def _default_key(val: Any) -> str:
 
 
 def _remember(
-    items: Union[Iterable[NT], Iterator[NT]],
+    items: Iterable[NT] | Iterator[NT],
     memory: dict[str, NT],
-    key_func: Optional[Callable[[NT], str]] = None,
+    key_func: Callable[[NT], str] | None = None,
 ) -> Iterator[str]:
     """
     convert each namedtuple to a string representation, using either
@@ -37,11 +35,11 @@ def _remember(
 
 
 def pick_namedtuple(
-    items: Union[Iterable[NT], Iterator[NT]],
+    items: Iterable[NT] | Iterator[NT],
     *,
-    fzf_options: Sequence[Union[str, Sequence[str]]] = (),
-    key_func: Optional[Callable[[NT], str]] = None,
-) -> Optional[NT]:
+    fzf_options: Sequence[str | Sequence[str]] = (),
+    key_func: Callable[[NT], str] | None = None,
+) -> NT | None:
     try:
         import pyfzf
     except ImportError as e:

@@ -5,11 +5,12 @@ from functools import lru_cache
 import types
 from typing import (
     Optional,
+    Type,
     TypeVar,
-    Callable,
     Union,
     Any,
 )
+from collections.abc import Callable
 from collections.abc import Sequence
 from enum import Enum
 from .exceptions import AutoTUIException
@@ -73,11 +74,8 @@ def add_to_container(container: AllowedContainers, item: T) -> AllowedContainers
     return container
 
 
-from typing import Type
-
-
 @cache
-def get_union_args(cls: Type) -> Optional[tuple[list[type[Any]], bool]]:
+def get_union_args(cls: Type) -> tuple[list[type[Any]], bool] | None:
     """
     >>> get_union_args(Union[str, int])
     ([<class 'str'>, <class 'int'>], False)
@@ -103,7 +101,7 @@ def get_union_args(cls: Type) -> Optional[tuple[list[type[Any]], bool]]:
     return arg_list, is_opt
 
 
-def resolve_annotation_single(cls: type) -> tuple[type, bool]:
+def resolve_annotation_single(cls: Type) -> tuple[type, bool]:
     """
     Given the annotation type from a namedtuple, extract the type
     Doesn't allow Unions other than Optional/None Unions

@@ -1,7 +1,8 @@
 import sys
 import warnings
 from datetime import datetime
-from typing import Optional, Callable, Union
+from typing import Optional
+from collections.abc import Callable
 from enum import Enum
 
 import click
@@ -50,7 +51,7 @@ def create_repl_prompt_str(prompt_msg: str) -> str:
 
 # handles the repetitive task of validating passed kwargs for prompt string for attrs
 def create_prompt_string(
-    for_type: Union[str, type], for_attr: Optional[str], prompt_msg: Optional[str]
+    for_type: str | type, for_attr: str | None, prompt_msg: str | None
 ) -> str:
     # if user supplied one, use that
     pmsg = prompt_msg
@@ -64,7 +65,7 @@ def create_prompt_string(
 ## STRING
 
 
-def prompt_str(for_attr: Optional[str] = None, prompt_msg: Optional[str] = None) -> str:
+def prompt_str(for_attr: str | None = None, prompt_msg: str | None = None) -> str:
     m: str = create_prompt_string(str, for_attr, prompt_msg)
     if is_enabled(Option.CLICK_PROMPT):
         ret = click.prompt(m, prompt_suffix="")
@@ -87,7 +88,7 @@ class IntValidator(Validator):
             raise ValidationError(message=str(ve))
 
 
-def prompt_int(for_attr: Optional[str] = None, prompt_msg: Optional[str] = None) -> int:
+def prompt_int(for_attr: str | None = None, prompt_msg: str | None = None) -> int:
     m: str = create_prompt_string(int, for_attr, prompt_msg)
     if is_enabled(Option.CLICK_PROMPT):
         ret = click.prompt(m, type=int, prompt_suffix="")
@@ -111,7 +112,7 @@ class FloatValidator(Validator):
 
 
 def prompt_float(
-    for_attr: Optional[str] = None, prompt_msg: Optional[str] = None
+    for_attr: str | None = None, prompt_msg: str | None = None
 ) -> float:
     m: str = create_prompt_string(float, for_attr, prompt_msg)
     if is_enabled(Option.CLICK_PROMPT):
@@ -127,8 +128,8 @@ def prompt_float(
 
 
 def prompt_bool(
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
     dialog_title: str = "===",
 ) -> bool:
     m: str = create_prompt_string(bool, for_attr, prompt_msg)
@@ -158,7 +159,7 @@ class LiveDatetimeValidator(Validator):
         self.parser_func = parser_func
         # defaults
         self.text = ""
-        self.parsed: Optional[datetime] = None
+        self.parsed: datetime | None = None
 
     def validate(self, document: Document) -> None:
         text = document.text.strip().lower()
@@ -166,7 +167,7 @@ class LiveDatetimeValidator(Validator):
         self.parsed = None  # reset so previous results dont stay
         if len(text) == 0:
             raise ValidationError(message="Not enough input...")
-        val: Optional[datetime] = self.parser_func(text)
+        val: datetime | None = self.parser_func(text)
         if val is None:
             raise ValidationError(message=f"Couldn't parse {text} into a datetime")
         else:
@@ -184,8 +185,8 @@ class LiveDatetimeValidator(Validator):
 
 
 def prompt_datetime(
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
 ) -> datetime:
     m: str = create_prompt_string(datetime, for_attr, prompt_msg)
     import dateparser  # type: ignore[import]
@@ -205,9 +206,9 @@ def prompt_datetime(
         ), "Fatal Error; Could not parse response from datetime prompt into a datetime"
         return dt
     else:
-        parsed_time: Optional[datetime] = None
+        parsed_time: datetime | None = None
         while parsed_time is None:
-            time_str: Optional[str] = input_dialog(
+            time_str: str | None = input_dialog(
                 title="Describe the datetime:",
                 text="For example:\n'now', '2 hours ago', 'noon', 'tomorrow at 10PM', 'may 30th at 8PM'",
                 style=STYLE,
@@ -247,8 +248,8 @@ def _create_enum_word_targets(enum_mapping: dict[str, Enum]) -> dict[str, Enum]:
 
 def prompt_enum(
     enum_cls: type[Enum],
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
 ) -> Enum:
     enum_name: str = getattr(enum_cls, "__name__", "Enum")
     m: str = create_prompt_string(enum_name, for_attr, prompt_msg)
@@ -322,8 +323,8 @@ def prompt_enum(
 
 
 def prompt_ask_another(
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
     dialog_title: str = "===",
 ) -> bool:
     m = prompt_msg
@@ -349,15 +350,15 @@ def prompt_ask_another(
 
 def prompt_optional(
     func: Callable[[], T],
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
     dialog_title: str = "===",
-) -> Optional[T]:
+) -> T | None:
     """
     A helper to ask if the user wants to enter information for an optional.
     If the user confirms, calls func (which asks the user for input)
     """
-    m: Optional[str] = prompt_msg
+    m: str | None = prompt_msg
     if m is None:
         assert (
             for_attr is not None
@@ -386,8 +387,8 @@ def prompt_optional(
 def prompt_wrap_error(
     func: Callable[[str], T],
     catch_errors: list[type],
-    for_attr: Optional[str] = None,
-    prompt_msg: Optional[str] = None,
+    for_attr: str | None = None,
+    prompt_msg: str | None = None,
 ) -> T:
     """
     Takes the prompt string, some function which takes the string the user

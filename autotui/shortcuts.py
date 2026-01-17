@@ -1,10 +1,8 @@
 from pathlib import Path
 from typing import (
-    Callable,
-    Union,
     Any,
-    Optional,
 )
+from collections.abc import Callable
 
 
 from . import (
@@ -17,7 +15,7 @@ from .fileio import Format
 from .typehelpers import PrimitiveType, NT, T, PromptFunctionorValue
 
 
-def _normalize(_path: Union[Path, str]) -> Path:
+def _normalize(_path: Path | str) -> Path:
     p: Path
     if isinstance(_path, str):
         p = Path(_path)
@@ -26,7 +24,7 @@ def _normalize(_path: Union[Path, str]) -> Path:
     return p.expanduser().absolute()
 
 
-def _detect_format(path: Path, format: Optional[Format]) -> Optional[Format]:
+def _detect_format(path: Path, format: Format | None) -> Format | None:
     ext = path.suffix
     if ext == ".json":
         format = "json"
@@ -43,11 +41,11 @@ def _detect_format(path: Path, format: Optional[Format]) -> Optional[Format]:
 
 def dump_to(
     items: list[NT],
-    path: Union[Path, str],
+    path: Path | str,
     *,
-    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
-    format: Optional[Format] = None,
+    attr_serializers: dict[str, Callable[[T], PrimitiveType]] | None = None,
+    type_serializers: dict[type, Callable[[Any], PrimitiveType]] | None = None,
+    format: Format | None = None,
 ) -> None:
     """
     Takes a list of NamedTuples (or subclasses) and a path to a file.
@@ -76,11 +74,11 @@ def dump_to(
 # to be consistent with dump_to
 def load_from(
     to: type[NT],
-    path: Union[Path, str],
+    path: Path | str,
     *,
-    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
-    format: Optional[Format] = None,
+    attr_deserializers: dict[str, Callable[[PrimitiveType], Any]] | None = None,
+    type_deserializers: dict[type, Callable[[PrimitiveType], Any]] | None = None,
+    format: Format | None = None,
     allow_empty: bool = False,
 ) -> list[NT]:
     """
@@ -117,19 +115,19 @@ def load_from(
 
 def load_prompt_and_writeback(
     to: type[NT],
-    path: Union[Path, str],
+    path: Path | str,
     *,
     create_file: bool = True,
-    attr_validators: Optional[dict[str, AutoHandler]] = None,
-    type_validators: Optional[dict[type[T], AutoHandler]] = None,
-    attr_use_values: Optional[dict[str, PromptFunctionorValue]] = None,
-    type_use_values: Optional[dict[type[T], PromptFunctionorValue]] = None,
-    attr_serializers: Optional[dict[str, Callable[[T], PrimitiveType]]] = None,
-    type_serializers: Optional[dict[type, Callable[[Any], PrimitiveType]]] = None,
-    attr_deserializers: Optional[dict[str, Callable[[PrimitiveType], Any]]] = None,
-    type_deserializers: Optional[dict[type, Callable[[PrimitiveType], Any]]] = None,
-    format: Optional[Format] = None,
-    prompt_function: Optional[Callable[..., NT]] = None,
+    attr_validators: dict[str, AutoHandler] | None = None,
+    type_validators: dict[type[T], AutoHandler] | None = None,
+    attr_use_values: dict[str, PromptFunctionorValue] | None = None,
+    type_use_values: dict[type[T], PromptFunctionorValue] | None = None,
+    attr_serializers: dict[str, Callable[[T], PrimitiveType]] | None = None,
+    type_serializers: dict[type, Callable[[Any], PrimitiveType]] | None = None,
+    attr_deserializers: dict[str, Callable[[PrimitiveType], Any]] | None = None,
+    type_deserializers: dict[type, Callable[[PrimitiveType], Any]] | None = None,
+    format: Format | None = None,
+    prompt_function: Callable[..., NT] | None = None,
 ) -> list[NT]:
     """
     An entry point to entire library, essentially.

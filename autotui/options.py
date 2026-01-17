@@ -1,5 +1,4 @@
 import os
-from typing import Optional, Union
 from collections.abc import Generator
 from collections import defaultdict
 from enum import auto, Enum
@@ -32,7 +31,7 @@ class Option(Enum):
 _ENABLED: dict[Option, set[object]] = defaultdict(set)
 
 
-def str_to_option(op: str) -> Optional[Option]:
+def str_to_option(op: str) -> Option | None:
     try:
         val: Option = getattr(Option, op.upper())
         return val
@@ -41,7 +40,7 @@ def str_to_option(op: str) -> Optional[Option]:
 
 
 @contextmanager
-def options(*opts: Union[str, Option]) -> Generator[None, None, None]:
+def options(*opts: str | Option) -> Generator[None, None, None]:
     """
     A contextmanager (meant to be used with a 'with' block) to temporarily enable options
     This way, disparate parts of the library don't have to have optional keyword arguments
@@ -61,7 +60,7 @@ def options(*opts: Union[str, Option]) -> Generator[None, None, None]:
     try:
         # add options
         for op in opts:
-            opt: Optional[Option] = None
+            opt: Option | None = None
             if isinstance(op, Option):
                 opt = op
             elif isinstance(op, str):
